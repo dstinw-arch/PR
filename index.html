@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>普渡贊普送品行程 · 淡水信合社公關</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--paper:#f3f3ef;--card:#fff;--ink:#23271f;--mute:#6d7268;--forest:#3a5134;--green:#4f953b;--sage:#8c9184;--gray:#a7a7a2;--line:rgba(58,81,52,.14);--line2:rgba(58,81,52,.08);--done-bg:#eef5ea;--recv-bg:#e7eee4;--warn:#a1573a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.55;font-size:15px;padding-bottom:56px}
+.wrap{max-width:680px;margin:0 auto;padding:0 14px}
+
+/* login */
+#login{position:fixed;inset:0;background:var(--forest);z-index:100;display:none;align-items:center;justify-content:center;padding:24px}
+#login .card{background:var(--card);border-radius:20px;padding:30px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+#login .otter{width:132px;margin:0 auto 6px}
+#login .otter-svg{width:100%;height:auto;display:block}
+#login .brand{font-family:"Noto Serif TC",serif;font-weight:900;font-size:22px;letter-spacing:4px;color:var(--forest);margin:0 0 18px}
+#pw{width:100%;font-size:22px;text-align:center;letter-spacing:8px;padding:12px;border:2px solid var(--line);border-radius:12px;font-family:inherit;color:var(--forest);font-weight:700}
+#pw:focus{outline:none;border-color:var(--green)}
+#login button{width:100%;margin-top:14px;background:var(--forest);color:#fff;border:none;border-radius:12px;padding:13px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer}
+#login button:active{transform:scale(.98)}
+#loginErr{color:var(--warn);font-size:13px;font-weight:600;margin-top:10px;min-height:18px}
+#login .hint{font-size:12px;color:var(--sage);margin-top:16px;line-height:1.7}
+
+header{background:var(--forest);color:#f3f3ef;padding:20px 0 16px;position:relative;overflow:hidden}
+header::after{content:"贊普";position:absolute;right:-4px;top:-16px;font-family:"Noto Serif TC",serif;font-weight:900;font-size:120px;color:rgba(255,255,255,.06);line-height:1;pointer-events:none;letter-spacing:4px}
+.h-top{display:flex;justify-content:space-between;align-items:flex-start}
+.h-eyebrow{font-size:12px;letter-spacing:3px;color:#b9c6b0;font-weight:500}
+h1{font-family:"Noto Serif TC",serif;font-weight:900;font-size:27px;margin:2px 0 6px;letter-spacing:1px}
+.h-sub{font-size:12.5px;color:#cdd6c6}
+.rolebadge{text-align:right;font-size:11px;color:#cdd6c6;flex:none}
+.rolebadge b{display:block;font-size:14px;color:#fff;font-weight:700;margin-bottom:2px}
+.rolebadge button{margin-top:4px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:3px 10px;font-size:11px;font-family:inherit;cursor:pointer}
+.h-note{margin-top:9px;display:inline-flex;gap:6px;background:rgba(255,255,255,.12);padding:4px 11px;border-radius:999px;font-size:12.5px;color:#eaf0e6}
+.h-note b{color:#c6ff9e;font-weight:700}
+.stats{display:flex;gap:8px;margin-top:12px}
+.stat{flex:1;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:8px 10px}
+.stat .n{font-family:"Noto Serif TC",serif;font-weight:900;font-size:20px;line-height:1;color:#fff}
+.stat .l{font-size:11px;color:#cdd6c6;margin-top:4px}
+.barwrap{margin-top:10px}
+.barlab{display:flex;justify-content:space-between;font-size:11px;color:#cdd6c6;margin-bottom:3px}
+.bar{height:6px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden;margin-bottom:7px}
+.bar>i{display:block;height:100%;width:0;transition:width .5s}
+.bar.d>i{background:linear-gradient(90deg,var(--green),#7bc45f)}
+.bar.r>i{background:linear-gradient(90deg,#8fb583,#c7dcbd)}
+.me{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12.5px;color:#dbe3d5}
+.me button{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:4px 12px;font-size:12.5px;font-family:inherit;cursor:pointer}
+.me b{color:#fff}
+
+.toolbar{position:sticky;top:0;z-index:20;background:var(--paper);padding:10px 0 8px;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:6px;margin-bottom:8px}
+.tab{flex:1;text-align:center;padding:8px 0;border-radius:10px;font-weight:700;font-size:14px;background:var(--card);border:1px solid var(--line);color:var(--mute);cursor:pointer}
+.tab.on{background:var(--forest);color:#fff;border-color:var(--forest)}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.seg div{flex:1;text-align:center;padding:7px 0;font-size:13px;font-weight:700;color:var(--mute);cursor:pointer;border-right:1px solid var(--line)}
+.seg div:last-child{border-right:none}
+.seg div.on{background:var(--sage);color:#fff}
+.rowline{display:flex;gap:8px;align-items:center}
+.chips{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex:1}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:5px 12px;border-radius:99px;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--mute);cursor:pointer;font-family:inherit}
+.chip.on{background:var(--sage);color:#fff;border-color:var(--sage)}
+.chip .c{opacity:.7;font-size:11px;margin-left:3px}
+.toggle{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--mute);cursor:pointer;white-space:nowrap;font-weight:600}
+.sw{width:38px;height:22px;border-radius:99px;background:var(--gray);position:relative;transition:.2s;flex:none}
+.sw::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.2s}
+.toggle.on .sw{background:var(--green)}.toggle.on .sw::after{left:18px}
+
+.day{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:14px 0;overflow:hidden}
+.day-h{display:flex;align-items:center;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line2)}
+.day-date{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:56px;padding:6px 0;background:var(--done-bg);border-radius:12px;line-height:1}
+.day-date .md{font-family:"Noto Serif TC",serif;font-weight:900;font-size:21px;color:var(--forest)}
+.day-date .wd{font-size:11px;color:var(--green);font-weight:700;margin-top:3px}
+.day-meta{flex:1;min-width:0}.day-meta .roc{font-weight:700;font-size:15px}.day-meta .sub{font-size:12px;color:var(--mute);margin-top:1px}
+.ring{--p:0;width:44px;height:44px;border-radius:50%;flex:none;background:conic-gradient(var(--green) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--forest)}
+.ring span{width:34px;height:34px;background:var(--card);border-radius:50%;display:grid;place-items:center}
+.rg{padding:2px 0}.rg-h{font-size:11.5px;letter-spacing:2px;color:var(--sage);font-weight:700;padding:9px 16px 3px}
+
+.drow{padding:11px 16px;border-top:1px solid var(--line2);border-left:3px solid transparent}
+.drow:first-child{border-top:none}
+.drow.d{border-left-color:var(--green)}
+.drow.dr{border-left-color:var(--forest)}
+.nm{font-weight:700;font-size:15.5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ev{font-size:12px;color:var(--mute);margin-top:1px}
+.tag{font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px}
+.t-temple{color:#fff;background:var(--forest)}
+.t-comm{color:var(--sage);background:rgba(140,145,132,.14)}
+.t-rg{color:var(--sage);background:rgba(140,145,132,.14)}
+.pf{font-size:11px;font-weight:700;color:var(--green);background:var(--done-bg);padding:1px 7px;border-radius:6px}
+.sub2{font-size:12.5px;color:var(--mute);margin-top:3px;line-height:1.5}
+.sub2 a{color:var(--sage);text-decoration:none;border-bottom:1px dashed var(--line)}
+.ddl{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px;margin-top:4px;background:var(--done-bg);color:var(--forest)}
+.ddl.soon{background:#f4ede4;color:var(--warn)}.ddl.over{background:#f1e2da;color:var(--warn)}
+.stbadge{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:5px;color:var(--mute);background:rgba(167,167,162,.16);margin-left:4px}
+.stbadge.set{color:var(--forest);background:var(--done-bg)}
+
+.acts{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+.chip2{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:99px;border:1.5px solid var(--line);color:var(--mute);background:#fff;user-select:none}
+.chip2 svg{width:13px;height:13px;stroke:currentColor;stroke-width:3.5;fill:none;opacity:.3}
+.chip2.deliver.on{background:var(--done-bg);border-color:var(--green);color:var(--green)}
+.chip2.receipt.on{background:var(--recv-bg);border-color:var(--forest);color:var(--forest)}
+.chip2.on svg{opacity:1}
+.chip2.can{cursor:pointer}.chip2.can:active{transform:scale(.95)}
+.chip2:not(.can){opacity:.6}
+.chip2 b{font-weight:700}
+.metaline{font-size:11px;color:var(--mute);margin-top:5px;line-height:1.5}
+.metaline .d{color:var(--green);font-weight:700}
+.metaline .r{color:var(--forest);font-weight:700}
+
+.block{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:14px 0;overflow:hidden}
+.block>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px}
+.block>summary::-webkit-details-marker{display:none}
+.block .cnt{font-size:12px;color:#fff;background:var(--forest);border-radius:99px;padding:2px 9px;font-weight:700}
+.block .body{padding:2px 16px 14px}
+.future-note{font-size:13px;color:var(--mute);padding:8px 0 6px;line-height:1.6}
+.future-items{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.future-items span{background:var(--done-bg);color:var(--forest);font-weight:700;font-size:12.5px;padding:5px 12px;border-radius:99px;border:1px dashed var(--green)}
+footer{text-align:center;color:var(--mute);font-size:11.5px;padding:22px 0 8px;line-height:1.7}
+.sync{display:inline-flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--gray)}
+.dot.live{background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,149,59,.5)}70%{box-shadow:0 0 0 7px rgba(79,149,59,0)}100%{box-shadow:0 0 0 0 rgba(79,149,59,0)}}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--forest);color:#fff;padding:10px 18px;border-radius:99px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:120;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{padding:22px 16px;text-align:center;color:var(--mute)}
+#app{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="card">
+    <div class="otter"><svg class="otter-svg" viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="水獺">
+        <ellipse cx="100" cy="197" rx="54" ry="9" fill="rgba(58,81,52,.10)"/>
+        <ellipse cx="100" cy="150" rx="50" ry="48" fill="#8c9184"/>
+        <ellipse cx="100" cy="158" rx="31" ry="36" fill="#e4e7df"/>
+        <ellipse cx="82" cy="189" rx="12" ry="9" fill="#6f7469"/>
+        <ellipse cx="118" cy="189" rx="12" ry="9" fill="#6f7469"/>
+        <path d="M87 178 q13 -13 26 0 q-13 9 -26 0 z" fill="#a7a7a2"/>
+        <path d="M87 178 q13 -13 26 0" fill="none" stroke="#6f7469" stroke-width="1.6"/>
+        <ellipse cx="100" cy="78" rx="48" ry="44" fill="#8c9184"/>
+        <ellipse cx="67" cy="46" rx="13" ry="13" fill="#8c9184"/>
+        <ellipse cx="133" cy="46" rx="13" ry="13" fill="#8c9184"/>
+        <ellipse cx="67" cy="46" rx="5.5" ry="5.5" fill="#6f7469"/>
+        <ellipse cx="133" cy="46" rx="5.5" ry="5.5" fill="#6f7469"/>
+        <ellipse cx="100" cy="96" rx="30" ry="24" fill="#eceee8"/>
+        <circle cx="82" cy="74" r="7" fill="#3a5134"/>
+        <circle cx="118" cy="74" r="7" fill="#3a5134"/>
+        <circle cx="84" cy="72" r="2.2" fill="#fff"/>
+        <circle cx="120" cy="72" r="2.2" fill="#fff"/>
+        <path d="M92 89 q8 -7 16 0 q0 8 -8 12 q-8 -4 -8 -12 z" fill="#3a5134"/>
+        <path d="M100 103 q-6 6 -12 3 M100 103 q6 6 12 3" stroke="#6f7469" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <g stroke="#a7a7a2" stroke-width="1.6" stroke-linecap="round">
+          <line x1="72" y1="94" x2="47" y2="90"/><line x1="72" y1="99" x2="47" y2="101"/>
+          <line x1="128" y1="94" x2="153" y2="90"/><line x1="128" y1="99" x2="153" y2="101"/>
+        </g>
+      </svg></div>
+    <div class="brand">公關運送</div>
+    <input id="pw" type="tel" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off">
+    <button id="loginBtn">進入</button>
+    <div id="loginErr"></div>
+  </div>
+</div>
+
+<div id="app">
+<header>
+  <div class="wrap">
+    <div class="h-top">
+      <div>
+        <div class="h-eyebrow">淡水信用合作社 · 公關贊普送品</div>
+        <h1>普渡贊普送品行程</h1>
+        <div class="h-sub">115年中元普渡 · 宮廟＆社區 · 依普渡日期為送達期限</div>
+      </div>
+      <div class="rolebadge"><b id="roleTitle">—</b><span id="roleAct">—</span><br><button id="logout">切換身分</button></div>
+    </div>
+    <div class="h-note">每單位一律 <b>5&nbsp;箱泡麵</b></div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="sTotal">0</div><div class="l">贊普單位</div></div>
+      <div class="stat"><div class="n" id="sDone">0</div><div class="l">已送達</div></div>
+      <div class="stat"><div class="n" id="sRecv">0</div><div class="l">已回執</div></div>
+    </div>
+    <div class="barwrap">
+      <div class="barlab"><span>送達進度</span><span id="dPct">0%</span></div>
+      <div class="bar d"><i id="barD"></i></div>
+      <div class="barlab"><span>回執進度</span><span id="rPct">0%</span></div>
+      <div class="bar r"><i id="barR"></i></div>
+    </div>
+    <div class="me">操作人：<b id="meName">未設定</b><button id="setMe">設定名字</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="toolbar">
+    <div class="tabs">
+      <div class="tab on" data-view="date">依普渡日期</div>
+      <div class="tab" data-view="region">依分區</div>
+    </div>
+    <div class="seg" id="typeSeg"><div class="on" data-t="全部">全部</div><div data-t="社區">社區</div><div data-t="宮廟">宮廟</div></div>
+    <div class="rowline">
+      <div class="chips" id="chips"></div>
+      <div class="toggle" id="pendTog"><span id="pendLab">只看待送達</span><span class="sw"></span></div>
+    </div>
+  </div>
+
+  <div id="main"></div>
+
+  <details class="block" id="futureBlock">
+    <summary><span>11月配送 · 月曆／日曆／農民曆</span><span class="cnt">待安排</span></summary>
+    <div class="body"><div class="future-note">年底前（11月）配送，目前尚未排定日期，排定後再更新到本頁。</div>
+      <div class="future-items"><span>月曆</span><span>日曆</span><span>農民曆</span></div></div>
+  </details>
+
+  <footer>
+    <div class="sync"><span class="dot" id="syncDot"></span><span id="syncTxt">連線中…</span></div>
+    <div>送達由配送同事(密碼8833)打勾；回執由辦公室同事(密碼0726)打勾。任一人更新即時同步。</div>
+  </footer>
+</div>
+</div>
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  設定區
+// ═══════════════════════════════════════════════════════════
+const SUPA_URL="https://euzcnkxxqwvkzutopwau.supabase.co", SUPA_KEY="sb_publishable_iW5bLz3gFFVvCP6MLTRIww_YZTOkNGb";
+const PW_DELIVER="8833", PW_OFFICE="0726";
+// ═══════════════════════════════════════════════════════════
+
+const RAW=[{"seq": 1, "org": "珊瑚貝殼廟", "event": "七月普渡超薦大法會", "unit": "珊瑚貝殼廟_七月普渡超薦大法會", "type": "宮廟", "loc": "石門", "pudu": "2026-08-15", "deliver": "2026-08-07", "status": "已配送", "owner": "自來件", "addr": "石門區富基里崁子腳99號", "contact": "", "phone": "(02)2638-0969"}, {"seq": 2, "org": "淡水福佑宮", "event": "慶讚中元普渡法會", "unit": "淡水福佑宮_慶讚中元普渡法會", "type": "宮廟", "loc": "淡水", "pudu": "2026-09-02", "deliver": null, "status": "未安排", "owner": "自來件", "addr": "淡水區中正路200號", "contact": "", "phone": "(02)2621-1731"}, {"seq": 3, "org": "台北清水灣公寓大廈", "event": "中元普渡", "unit": "台北清水灣公寓大廈_中元普渡", "type": "社區", "loc": "五股", "pudu": "2026-08-30", "deliver": "2026-08-06", "status": "已配送", "owner": "徐慶瑞", "addr": "五股區成泰路四段10號", "contact": "", "phone": "(02)2292-1822"}, {"seq": 4, "org": "台北 GOGO社區", "event": "中元普渡", "unit": "台北 GOGO社區_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-22", "deliver": "2026-08-06", "status": "已配送", "owner": "徐慶瑞", "addr": "淡水區民權里民權路173巷1號", "contact": "", "phone": ""}, {"seq": 5, "org": "義仁里辦公處&義仁社區發展協會", "event": "聯合辦理中元普渡", "unit": "義仁里辦公處&義仁社區發展協會_聯合辦理中元普渡", "type": "社區", "loc": "泰山", "pudu": "2026-08-23", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "武泰臻和社區中庭、泰山區義仁里明志路二段121號", "contact": "", "phone": "(02)8531-2645"}, {"seq": 6, "org": "山水豪景社區", "event": "中元普渡", "unit": "山水豪景社區_中元普渡", "type": "社區", "loc": "五股", "pudu": "2026-08-23", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "五股區水碓路16巷51號1樓", "contact": "", "phone": "(02)2295-35"}, {"seq": 7, "org": "真藏館社區", "event": "中元普渡", "unit": "真藏館社區_中元普渡", "type": "社區", "loc": "林口", "pudu": "2026-08-22", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "林口區文化三路一段", "contact": "", "phone": "(02)2600-6371"}, {"seq": 8, "org": "沙崙保安廟", "event": "百姓公普", "unit": "沙崙保安廟_百姓公普", "type": "宮廟", "loc": "淡水", "pudu": "2026-08-30", "deliver": "2026-08-06", "status": "已配送", "owner": "吳俊慶", "addr": "淡水區沙崙里淡海路189巷10號", "contact": "", "phone": "(02)2805-5947"}, {"seq": 9, "org": "台灣道教總會", "event": "中元普渡法會", "unit": "台灣道教總會_中元普渡法會", "type": "宮廟", "loc": "淡水", "pudu": "2026-08-23", "deliver": "2026-08-06", "status": "已配送", "owner": "自來件", "addr": "淡水區幸福里中正東路40之2號", "contact": "", "phone": "(02)2621-0741"}, {"seq": 10, "org": "尚豪庭社區", "event": "普渡", "unit": "尚豪庭社區_普渡", "type": "社區", "loc": "泰山", "pudu": "2026-08-23", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "泰山區明志路二段103-1號", "contact": "", "phone": "(02)2296-7459"}, {"seq": 11, "org": "合登上豪滿意社區", "event": "中元普渡", "unit": "合登上豪滿意社區_中元普渡", "type": "社區", "loc": "泰山", "pudu": "2026-08-23", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "泰山區明志路二段230號", "contact": "", "phone": "(02)2909-1298"}, {"seq": 12, "org": "薪水居易B區", "event": "普渡", "unit": "薪水居易B區_普渡", "type": "社區", "loc": "三芝", "pudu": "2026-08-16", "deliver": "2026-08-06", "status": "已配送", "owner": "徐慶瑞", "addr": "三芝區淡金路二段43-83號之1號", "contact": "", "phone": "(02)2636-3800"}, {"seq": 13, "org": "三陽世界觀大廈", "event": "中元普渡", "unit": "三陽世界觀大廈_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-22", "deliver": "2026-08-06", "status": "已配送", "owner": "徐慶瑞", "addr": "淡水區油車里中正路一段86號", "contact": "", "phone": "(02)2805-9528"}, {"seq": 14, "org": "新春第一景", "event": "中元普渡", "unit": "新春第一景_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-23", "deliver": "2026-08-06", "status": "已配送", "owner": "徐慶瑞", "addr": "淡水區新春里新春街125巷2~38號", "contact": "", "phone": "(02)2629-8254"}, {"seq": 15, "org": "三寶宮", "event": "中元普渡", "unit": "三寶宮_中元普渡", "type": "宮廟", "loc": "淡水", "pudu": "2026-08-30", "deliver": "2026-08-07", "status": "已配送", "owner": "王永信", "addr": "淡水區水源里5鄰南勢埔20號", "contact": "", "phone": "(02)2621-8587"}, {"seq": 16, "org": "三芝米蘭公寓大廈", "event": "中元普渡", "unit": "三芝米蘭公寓大廈_中元普渡", "type": "社區", "loc": "三芝", "pudu": "2026-08-22", "deliver": "2026-08-06", "status": "已配送", "owner": "徐慶瑞", "addr": "三芝區三民街41-85號", "contact": "", "phone": "(02)2636-4319"}, {"seq": 17, "org": "淡水清水龍保正宮", "event": "中元普渡", "unit": "淡水清水龍保正宮_中元普渡", "type": "宮廟", "loc": "淡水", "pudu": "2026-08-23", "deliver": "2026-08-06", "status": "已配送", "owner": "王永信", "addr": "淡水區正德里北新路69巷", "contact": "", "phone": "吳先生0932087015"}, {"seq": 18, "org": "伊東市社區", "event": "中元普渡", "unit": "伊東市社區_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-30", "deliver": "2026-08-06", "status": "已配送", "owner": "自來件", "addr": "淡水區淡金路二段125~171號", "contact": "", "phone": "施主任、王祕書、電話:(02)2628-2719"}, {"seq": 19, "org": "三芝八仙宮", "event": "普渡超薦法會", "unit": "三芝八仙宮_普渡超薦法會", "type": "宮廟", "loc": "三芝", "pudu": "2026-09-01", "deliver": "2026-08-06", "status": "已配送", "owner": "自來件", "addr": "三芝區新庄里番社后31-1號", "contact": "", "phone": "(02)2636-0743"}, {"seq": 20, "org": "金包里慈護宮", "event": "普施大法會", "unit": "金包里慈護宮_普施大法會", "type": "宮廟", "loc": "金山", "pudu": "2026-08-27", "deliver": null, "status": "未安排", "owner": "曾經理", "addr": "金山區金包里街16號", "contact": "", "phone": "(02)2498-2511"}, {"seq": 21, "org": "三芝熱帶嶼", "event": "中元普渡", "unit": "三芝熱帶嶼_中元普渡", "type": "社區", "loc": "三芝", "pudu": "2026-08-23", "deliver": "2026-08-06", "status": "已配送", "owner": "自來件", "addr": "三芝區樂全街2號", "contact": "總幹事 朱雅鈴", "phone": "(02)8635-1547"}, {"seq": 22, "org": "金山天龍宮", "event": "慶贊中元", "unit": "金山天龍宮_慶贊中元", "type": "宮廟", "loc": "金山", "pudu": "2026-08-29", "deliver": null, "status": "未安排", "owner": "曾經理", "addr": "金山區萬壽里海興路43-2號", "contact": "", "phone": "(02)2498-2833、2498-2876"}, {"seq": 23, "org": "三芝天玉宮", "event": "普渡", "unit": "三芝天玉宮_普渡", "type": "宮廟", "loc": "三芝", "pudu": "2026-08-16", "deliver": "2026-08-06", "status": "已配送", "owner": "闆娘", "addr": "三芝區茂長里16號之1", "contact": "", "phone": "-"}, {"seq": 24, "org": "金龍太子宮", "event": "中元普渡", "unit": "金龍太子宮_中元普渡", "type": "宮廟", "loc": "淡水", "pudu": "2026-08-30", "deliver": "2026-08-06", "status": "已配送", "owner": "前水源里里長: 張志楨", "addr": "淡水區北新路二段28號", "contact": "", "phone": "0989-850-785"}, {"seq": 25, "org": "淡水金福宮", "event": "中元普渡祈安大典", "unit": "淡水金福宮_中元普渡祈安大典", "type": "宮廟", "loc": "淡水", "pudu": "2026-08-29", "deliver": "2026-08-06", "status": "已配送", "owner": "李主委", "addr": "淡水區民安里三民街23號", "contact": "李主委", "phone": "0912-509-821"}, {"seq": 26, "org": "淡水忠寮大王廟", "event": "中元普渡祈福法會", "unit": "淡水忠寮大王廟_中元普渡祈福法會", "type": "宮廟", "loc": "淡水", "pudu": "2026-08-22", "deliver": "2026-08-06", "status": "已配送", "owner": "委員", "addr": "淡水區忠寮里大竹圍5號", "contact": "", "phone": "(02)2805-6100"}, {"seq": 27, "org": "薪水居易特區", "event": "中元普渡", "unit": "薪水居易特區_中元普渡", "type": "社區", "loc": "三芝", "pudu": "2026-08-15", "deliver": "2026-08-06", "status": "已配送", "owner": "徐慶瑞", "addr": "三芝區淡金路二段43-83號之1", "contact": "", "phone": "(02)2636-5754"}, {"seq": 28, "org": "薪水居易公園特區", "event": "中元普渡", "unit": "薪水居易公園特區_中元普渡", "type": "社區", "loc": "三芝", "pudu": "2026-09-05", "deliver": "2026-08-06", "status": "已配送", "owner": "徐慶瑞", "addr": "三芝區中正路一段18巷54號", "contact": "", "phone": "(02)2636-3800"}, {"seq": 29, "org": "藝術國寶公寓大廈", "event": "中元普渡", "unit": "藝術國寶公寓大廈_中元普渡", "type": "社區", "loc": "新莊", "pudu": "2026-08-22", "deliver": "2026-08-07", "status": "未安排", "owner": "杜經理", "addr": "新莊區立廷里立信三街6-1號", "contact": "主任委員:林珊如", "phone": "(02)2997-5671"}, {"seq": 30, "org": "凡登特區", "event": "中元普渡", "unit": "凡登特區_中元普渡", "type": "社區", "loc": "新莊", "pudu": "2026-08-15", "deliver": "2026-08-07", "status": "未安排", "owner": "杜經理", "addr": "新莊區立信一街98號", "contact": "-", "phone": "-"}, {"seq": 31, "org": "路易特區", "event": "中元普渡", "unit": "路易特區_中元普渡", "type": "社區", "loc": "新莊", "pudu": "2026-08-22", "deliver": "2026-08-07", "status": "未安排", "owner": "杜經理", "addr": "新莊區立信一街53號", "contact": "-", "phone": "-"}, {"seq": 32, "org": "台北桂冠凡爾賽社區", "event": "中元普渡", "unit": "台北桂冠凡爾賽社區_中元普渡", "type": "社區", "loc": "新莊", "pudu": "2026-08-23", "deliver": "2026-08-07", "status": "未安排", "owner": "杜經理", "addr": "新北市新莊區立信一街10巷12號", "contact": "", "phone": "(02)2996-6507"}, {"seq": 33, "org": "幸福GOGO社區", "event": "中元普渡", "unit": "幸福GOGO社區_中元普渡", "type": "社區", "loc": "新莊", "pudu": "2026-08-29", "deliver": "2026-08-07", "status": "未安排", "owner": "杜經理", "addr": "新莊區幸福路904號", "contact": "", "phone": "(02)8992-2887"}, {"seq": 34, "org": "宏觀天下公寓大廈", "event": "中元普渡", "unit": "宏觀天下公寓大廈_中元普渡", "type": "社區", "loc": "泰山", "pudu": "2026-08-23", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "泰山區貴陽街8號", "contact": "", "phone": "(02)2902-2901"}, {"seq": 35, "org": "勤樸天翔社區", "event": "中元普渡", "unit": "勤樸天翔社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-09-05", "deliver": null, "status": "未安排", "owner": "徐慶瑞", "addr": "八里區文昌街169-183", "contact": "", "phone": "(02)8630-2974"}, {"seq": 36, "org": "淡水北極玄聖宮", "event": "中元普渡", "unit": "淡水北極玄聖宮_中元普渡", "type": "宮廟", "loc": "淡水", "pudu": "2026-08-22", "deliver": null, "status": "未安排", "owner": "范經理", "addr": "淡水區賢孝里淡金路四段590號", "contact": "", "phone": "(02)2801-0366"}, {"seq": 37, "org": "海景天下大樓", "event": "中元普渡", "unit": "海景天下大樓_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-16", "deliver": "2026-08-07", "status": "已配送", "owner": "徐慶瑞", "addr": "淡水區水碓里大忠街85號", "contact": "", "phone": "(02)2621-8349"}, {"seq": 38, "org": "莎莎亞公寓大廈", "event": "中元普渡", "unit": "莎莎亞公寓大廈_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-23", "deliver": "2026-08-07", "status": "已配送", "owner": "徐慶瑞", "addr": "淡水區竿蓁里中正東路一段54號", "contact": "", "phone": "(02)2625-2831"}, {"seq": 39, "org": "淡水新都", "event": "中元普渡", "unit": "淡水新都_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-22", "deliver": "2026-08-07", "status": "已配送", "owner": "徐慶瑞", "addr": "淡水區新春里新春街113-123號", "contact": "", "phone": "(02)2620-6452"}, {"seq": 40, "org": "常鑫匯社區", "event": "中元普渡", "unit": "常鑫匯社區_中元普渡", "type": "社區", "loc": "五股", "pudu": "2026-08-29", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "五股區成泰路三段520號", "contact": "", "phone": "(02)2292-9176"}, {"seq": 41, "org": "新莊風華社區", "event": "中元普渡", "unit": "新莊風華社區_中元普渡", "type": "社區", "loc": "新莊", "pudu": "2026-08-22", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "新莊區中原路368號", "contact": "", "phone": "(02)8522-7309"}, {"seq": 42, "org": "蓬萊二祖會", "event": "中元普渡", "unit": "蓬萊二祖會_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-09-01", "deliver": null, "status": "未安排", "owner": "康協理", "addr": "淡水區義山里行忠路61號", "contact": "二祖會會長:林志威", "phone": 933088394}, {"seq": 43, "org": "小基隆福成宮", "event": "中元普渡", "unit": "小基隆福成宮_中元普渡", "type": "宮廟", "loc": "三芝", "pudu": "2026-08-27", "deliver": null, "status": "未安排", "owner": "康協理", "addr": "三芝區中山路一段38號", "contact": "", "phone": "(02)2636-2076"}, {"seq": 44, "org": "帝王鄉公寓大廈", "event": "中元普渡", "unit": "帝王鄉公寓大廈_中元普渡", "type": "社區", "loc": "泰山", "pudu": "2026-08-23", "deliver": "2026-08-07", "status": "未安排", "owner": "徐慶瑞", "addr": "泰山區明志路二段136巷2弄1號", "contact": "", "phone": "(02)2297-8886"}, {"seq": 45, "org": "喜來登社區", "event": "中元普渡", "unit": "喜來登社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-08-23", "deliver": null, "status": "未安排", "owner": "林麗珍", "addr": "八里區中華路二段560巷21號", "contact": "", "phone": "(02)2619-1503"}, {"seq": 46, "org": "愛情海社區", "event": "中元普渡", "unit": "愛情海社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-08-16", "deliver": null, "status": "未安排", "owner": "林麗珍", "addr": "八里區中山路二段218號", "contact": "", "phone": "(02)8630-1736"}, {"seq": 47, "org": "雄蓋綻社區", "event": "中元普渡", "unit": "雄蓋綻社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-08-22", "deliver": null, "status": "未安排", "owner": "林麗珍", "addr": "八里區中山路二段287號", "contact": "", "phone": "(02)2610-8311"}, {"seq": 48, "org": "四季 Lavie社區", "event": "中元普渡", "unit": "四季 Lavie社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-08-15", "deliver": null, "status": "未安排", "owner": "林麗珍", "addr": "八里區商港路293號", "contact": "", "phone": "0983-466-233"}, {"seq": 49, "org": "港都大廈社區", "event": "中元普渡", "unit": "港都大廈社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-08-15", "deliver": null, "status": "未安排", "owner": "林麗珍", "addr": "八里區中山路二段447巷6號", "contact": "", "phone": "(02)2619-1475"}, {"seq": 50, "org": "日初社區", "event": "中元普渡", "unit": "日初社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-09-05", "deliver": null, "status": "未安排", "owner": "林麗珍", "addr": "八里區中山路三段91號", "contact": "", "phone": "(02)2630-2265"}, {"seq": 51, "org": "海之鄉社區", "event": "中元普渡", "unit": "海之鄉社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-08-23", "deliver": null, "status": "未安排", "owner": "林麗珍", "addr": "八里區華峰一街20號", "contact": "", "phone": "(02)2610-3987"}, {"seq": 52, "org": "水澍之間社區", "event": "中元普渡", "unit": "水澍之間社區_中元普渡", "type": "社區", "loc": "八里", "pudu": "2026-08-23", "deliver": null, "status": "未安排", "owner": "林麗珍", "addr": "八里區中山路一段306巷3號", "contact": "", "phone": "(02)2610-7626"}, {"seq": 53, "org": "凱悅花園 B 區", "event": "中元普渡", "unit": "凱悅花園 B 區_中元普渡", "type": "社區", "loc": "泰山", "pudu": "2026-08-16", "deliver": null, "status": "未安排", "owner": "徐慶瑞", "addr": "泰山區仁義路220巷10號", "contact": "", "phone": "(02)2900-9149"}, {"seq": 54, "org": "方圓佰里社區", "event": "中元普渡", "unit": "方圓佰里社區_中元普渡", "type": "社區", "loc": "泰山", "pudu": "-", "deliver": "2026-08-07", "status": "已配送", "owner": "徐慶瑞", "addr": "泰山區明志路二段70號", "contact": "", "phone": "(02)2297-3401"}, {"seq": 55, "org": "可可亞四季水花園", "event": "中元普渡", "unit": "可可亞四季水花園_中元普渡", "type": "社區", "loc": "泰山", "pudu": "-", "deliver": "2026-08-07", "status": "已配送", "owner": "徐慶瑞", "addr": "泰山區文程路1號", "contact": "", "phone": "(02)2909-3974"}, {"seq": 56, "org": "觀海極品社區", "event": "中元普渡", "unit": "觀海極品社區_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-22", "deliver": null, "status": "未安排", "owner": "王詩怡", "addr": "淡水區竹圍里民族路31號", "contact": "吳小姐", "phone": "(02)2809-8028"}, {"seq": 57, "org": "新洋房社區", "event": "中元普渡", "unit": "新洋房社區_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-30", "deliver": null, "status": "未安排", "owner": "王詩怡", "addr": "淡水區民生里民生路117巷46號", "contact": "王衛華", "phone": "0912-865-500"}, {"seq": 58, "org": "潤泰山河社區", "event": "中元普渡", "unit": "潤泰山河社區_中元普渡", "type": "社區", "loc": "淡水", "pudu": "2026-08-22", "deliver": "2026-08-07", "status": "已配送", "owner": "徐慶瑞", "addr": "淡水區北新里大忠街113巷23號", "contact": "", "phone": "(02)2626-1652"}, {"seq": 59, "org": "五龍山紫雲巖", "event": "中元普渡", "unit": "五龍山紫雲巖_中元普渡", "type": "宮廟", "loc": "石門", "pudu": "2026-08-27", "deliver": null, "status": "已安排", "owner": "康協理", "addr": "石門區崁子腳28號之4", "contact": "山主-楊富証", "phone": "0919-931-518"}, {"seq": 60, "org": "和衷宮", "event": "中元普渡", "unit": "和衷宮_中元普渡", "type": "宮廟", "loc": "淡水", "pudu": "2026-09-02", "deliver": null, "status": "已安排", "owner": "吳俊慶", "addr": "淡水區草東里公明街56巷1號", "contact": "", "phone": "(02)2626-4155"}, {"seq": 61, "org": "君悅特區", "event": "中元普渡", "unit": "君悅特區_中元普渡", "type": "社區", "loc": "新莊", "pudu": "2026-09-05", "deliver": null, "status": "已安排", "owner": "杜金龍", "addr": "新莊區立信一街51號", "contact": "", "phone": "(02)2276-7912"}, {"seq": 62, "org": "凱悅四季", "event": "中元普渡", "unit": "凱悅四季_中元普渡", "type": "社區", "loc": "泰山", "pudu": "2026-08-15", "deliver": "2026-08-07", "status": "已配送", "owner": "李經理", "addr": "泰山區全興里仁愛路100巷12號", "contact": "", "phone": "-"}];
+const REGION_ORDER=["石門","金山","三芝","淡水","八里","五股","泰山","新莊","林口"];
+const WD={0:"日",1:"一",2:"二",3:"三",4:"四",5:"五",6:"六"};
+let statusMap={}, view="date", typeFilter="全部", regionFilter="全部", pendOnly=false;
+let role=loadRole(), deliverer=loadName(), sb=null;
+
+function loadRole(){try{return localStorage.getItem("pudu_role")||null}catch(e){return null}}
+function loadName(){try{return localStorage.getItem("pudu_deliverer")||""}catch(e){return ""}}
+function saveName(v){try{localStorage.setItem("pudu_deliverer",v)}catch(e){}}
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function telify(raw){if(!raw)return null;let m=raw.match(/09\d{2}[- ]?\d{3}[- ]?\d{3}/);if(m)return m[0].replace(/[- ]/g,"");let l=raw.match(/\(?0\d\)?[- ]?\d{3,4}[- ]?\d{3,4}/)||raw.match(/\d{4}[- ]?\d{4}/)||raw.match(/\d{7,8}/);if(l){let d=l[0].replace(/[^0-9]/g,"");return d[0]==="0"?d:"02"+d}return null}
+function mapUrl(a){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("新北市"+a)}
+function fmtTime(iso){if(!iso)return"";const d=new Date(iso);if(isNaN(d))return"";return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`}
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),1700)}
+function isD(seq){return statusMap[seq]&&statusMap[seq].delivered}
+function isR(seq){return statusMap[seq]&&statusMap[seq].receipt_received}
+function daysLeft(iso){const t=new Date();t.setHours(0,0,0,0);const d=new Date(iso);d.setHours(0,0,0,0);return Math.round((d-t)/86400000)}
+
+/* login */
+function showLogin(){document.getElementById("login").style.display="flex";document.getElementById("app").style.display="none";setTimeout(()=>document.getElementById("pw").focus(),50)}
+function enterApp(){document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";updateRoleUI();renderChips();render();if(!deliverer)promptName(false)}
+function tryLogin(){const v=document.getElementById("pw").value.trim();
+  if(v===PW_DELIVER){setRole("deliver")}else if(v===PW_OFFICE){setRole("office")}
+  else{document.getElementById("loginErr").textContent="密碼不正確，請再試一次";document.getElementById("pw").value=""}}
+function setRole(r){role=r;try{localStorage.setItem("pudu_role",r)}catch(e){}document.getElementById("loginErr").textContent="";document.getElementById("pw").value="";enterApp()}
+function logout(){role=null;try{localStorage.removeItem("pudu_role")}catch(e){}showLogin()}
+function updateRoleUI(){
+  const isDlv=role==="deliver";
+  document.getElementById("roleTitle").textContent=isDlv?"配送同事":"辦公室同事";
+  document.getElementById("roleAct").textContent=isDlv?"打「送達」":"打「回執」";
+  document.getElementById("pendLab").textContent=isDlv?"只看待送達":"只看待回執";
+}
+
+/* filters */
+function pendPred(r){return role==="office"?(isD(r.seq)&&!isR(r.seq)):!isD(r.seq)}
+function visible(){return RAW.filter(r=>(typeFilter==="全部"||r.type===typeFilter)&&(regionFilter==="全部"||r.loc===regionFilter)&&(!pendOnly||pendPred(r)))}
+function renderChips(){const chips=document.getElementById("chips");
+  const base=RAW.filter(r=>typeFilter==="全部"||r.type===typeFilter);
+  const present=REGION_ORDER.filter(rg=>base.some(r=>r.loc===rg));
+  chips.innerHTML=["全部",...present].map(rg=>{const n=rg==="全部"?base.length:base.filter(r=>r.loc===rg).length;
+    return `<div class="chip ${rg===regionFilter?"on":""}" data-r="${rg}">${rg}<span class="c">${n}</span></div>`}).join("");
+  chips.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{regionFilter=c.dataset.r;renderChips();render()});}
+
+/* row */
+function tickSvg(){return '<svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg>'}
+function typeTag(t){return t==="宮廟"?'<span class="tag t-temple">宮廟</span>':'<span class="tag t-comm">社區</span>'}
+function ddlHtml(r){if(isD(r.seq))return"";const dl=daysLeft(r.pudu);let cls="ddl",txt;
+  if(dl<0){cls+=" over";txt="已過普渡日"}else if(dl===0){cls+=" soon";txt="今天普渡"}else if(dl<=3){cls+=" soon";txt=`剩 ${dl} 天`}else{txt=`剩 ${dl} 天`}
+  const d=new Date(r.pudu);return `<span class="${cls}">普渡 ${d.getMonth()+1}/${d.getDate()} · ${txt}</span>`}
+function stBadge(r){if(isD(r.seq))return"";if(r.status==="已安排")return '<span class="stbadge set">已安排</span>';if(r.status==="未安排")return '<span class="stbadge">未安排</span>';return""}
+
+function rowHtml(r,showRegion){
+  const s=statusMap[r.seq]||{},dOn=!!s.delivered,rOn=!!s.receipt_received,tel=telify(r.phone);
+  const phone=r.phone?`<a href="${tel?`tel:${tel}`:"#"}">${esc(r.phone)}</a>`:"";
+  const contact=r.contact?" · "+esc(r.contact):"";
+  const rg=showRegion?`<span class="tag t-rg">${esc(r.loc)}</span>`:"";
+  const ev=r.event?`<div class="ev">${esc(r.event)}</div>`:"";
+  const canD=role==="deliver",canR=role==="office";
+  const dChip=`<div class="chip2 deliver ${dOn?"on":""} ${canD?"can":""}" data-act="deliver" data-seq="${r.seq}">${tickSvg()}<b>送達</b></div>`;
+  const rChip=`<div class="chip2 receipt ${rOn?"on":""} ${canR?"can":""}" data-act="receipt" data-seq="${r.seq}">${tickSvg()}<b>回執</b></div>`;
+  let meta="";
+  if(dOn)meta+=`<span class="d">✓送達 ${esc(s.delivered_by||"")}${s.delivered_at?" · "+fmtTime(s.delivered_at):""}</span>`;
+  if(dOn&&rOn)meta+="　";
+  if(rOn)meta+=`<span class="r">✓回執 ${esc(s.receipt_by||"")}${s.receipt_at?" · "+fmtTime(s.receipt_at):""}</span>`;
+  const cls="drow"+(dOn&&rOn?" dr":(dOn?" d":""));
+  return `<div class="${cls}">
+    <div class="nm">${esc(r.org)}${typeTag(r.type)}${rg}<span class="pf">5箱</span></div>${ev}
+    <div class="sub2"><a href="${mapUrl(r.addr)}" target="_blank" rel="noopener">${esc(r.addr)}</a>${phone?" · "+phone:""}${contact}</div>
+    ${ddlHtml(r)}${stBadge(r)}
+    <div class="acts">${dChip}${rChip}</div>
+    ${meta?`<div class="metaline">${meta}</div>`:""}
+  </div>`;
+}
+
+function renderByDate(){const main=document.getElementById("main");const items=visible();
+  if(!items.length){main.innerHTML='<div class="day"><div class="empty">目前沒有符合條件的單位。</div></div>';return}
+  const byDate={};items.forEach(r=>{(byDate[r.pudu]=byDate[r.pudu]||[]).push(r)});
+  const dates=Object.keys(byDate).sort();
+  main.innerHTML=dates.map(iso=>{const list=byDate[iso],d=new Date(iso),md=`${d.getMonth()+1}/${d.getDate()}`,wd=WD[d.getDay()];
+    const done=list.filter(r=>isD(r.seq)).length,tot=list.length,pct=Math.round(done/tot*100);
+    const byReg={};list.forEach(r=>{(byReg[r.loc]=byReg[r.loc]||[]).push(r)});
+    const groups=REGION_ORDER.filter(rr=>byReg[rr]).map(rr=>`<div class="rg"><div class="rg-h">${rr}（${byReg[rr].length}）</div>${byReg[rr].map(r=>rowHtml(r,false)).join("")}</div>`).join("");
+    return `<div class="day"><div class="day-h">
+      <div class="day-date"><div class="md">${md}</div><div class="wd">週${wd}</div></div>
+      <div class="day-meta"><div class="roc">普渡 115/${d.getMonth()+1}/${d.getDate()}（${tot} 單位 · ${tot*5} 箱）</div><div class="sub">送達 ${done}/${tot}</div></div>
+      <div class="ring" style="--p:${pct}"><span>${done}/${tot}</span></div></div>${groups}</div>`}).join("");
+  bindRows();}
+
+function renderByRegion(){const main=document.getElementById("main");const items=visible();
+  const regs=REGION_ORDER.filter(rg=>items.some(r=>r.loc===rg));
+  if(!regs.length){main.innerHTML='<div class="day"><div class="empty">目前沒有符合條件的單位。</div></div>';return}
+  main.innerHTML=regs.map(rg=>{const list=items.filter(r=>r.loc===rg).sort((a,b)=>a.pudu<b.pudu?-1:1);
+    const done=list.filter(r=>isD(r.seq)).length;
+    return `<div class="day"><div class="day-h">
+      <div class="day-date" style="background:var(--forest);min-width:52px"><div class="md" style="color:#fff;font-size:15px">${rg}</div></div>
+      <div class="day-meta"><div class="roc">${rg}（${list.length} 單位 · ${list.length*5} 箱）</div><div class="sub">送達 ${done}/${list.length}</div></div>
+      <div class="ring" style="--p:${Math.round(done/list.length*100)}"><span>${done}/${list.length}</span></div></div>${list.map(r=>rowHtml(r,false)).join("")}</div>`}).join("");
+  bindRows();}
+
+function render(){view==="date"?renderByDate():renderByRegion();renderStats()}
+function renderStats(){const tot=RAW.length,dn=RAW.filter(r=>isD(r.seq)).length,rc=RAW.filter(r=>isR(r.seq)).length;
+  document.getElementById("sTotal").textContent=tot;
+  document.getElementById("sDone").textContent=dn;
+  document.getElementById("sRecv").textContent=rc;
+  document.getElementById("barD").style.width=(tot?dn/tot*100:0)+"%";
+  document.getElementById("barR").style.width=(tot?rc/tot*100:0)+"%";
+  document.getElementById("dPct").textContent=Math.round(tot?dn/tot*100:0)+"%";
+  document.getElementById("rPct").textContent=Math.round(tot?rc/tot*100:0)+"%";}
+
+function bindRows(){document.querySelectorAll(".chip2[data-act]").forEach(c=>{if(c._b)return;c._b=true;
+  c.addEventListener("click",()=>act(parseInt(c.dataset.seq,10),c.dataset.act))})}
+
+async function act(seq,kind){
+  if(kind==="deliver"&&role!=="deliver"){toast("「送達」請用配送身分(8833)");return}
+  if(kind==="receipt"&&role!=="office"){toast("「回執」請用辦公室身分(0726)");return}
+  if(!deliverer){promptName(true);if(!deliverer)return}
+  const s=Object.assign({},statusMap[seq]||{});let patch,cur;
+  if(kind==="deliver"){cur=!!s.delivered;const n=!cur;patch={delivered:n,delivered_by:n?deliverer:null,delivered_at:n?new Date().toISOString():null}}
+  else{cur=!!s.receipt_received;const n=!cur;patch={receipt_received:n,receipt_by:n?deliverer:null,receipt_at:n?new Date().toISOString():null}}
+  statusMap[seq]=Object.assign({},s,patch);render();
+  if(!sb){toast("離線：僅本機更新");return}
+  const up=Object.assign({},patch,{updated_at:new Date().toISOString()});
+  const {error}=await sb.from("pudu_status").update(up).eq("seq",seq);
+  if(error){statusMap[seq]=s;render();toast("更新失敗，請重試");console.error(error)}
+  else toast(patch.delivered===true?"已標記送達":patch.delivered===false?"已取消送達":patch.receipt_received?"已標記回執":"已取消回執");
+}
+function promptName(force){const v=prompt("請輸入你的名字（會記在打勾旁）：",deliverer||"");
+  if(v&&v.trim()){deliverer=v.trim();saveName(deliverer);document.getElementById("meName").textContent=deliverer}
+  else if(force)toast("要打勾需先設定名字")}
+
+async function initData(){if(!sb)return;const {data,error}=await sb.from("pudu_status").select("seq,delivered,delivered_by,delivered_at,receipt_received,receipt_by,receipt_at");
+  if(error){console.error(error);setSync(false);return}data.forEach(r=>statusMap[r.seq]=r);if(role)render();setSync(true)}
+function setSync(live){const dot=document.getElementById("syncDot"),txt=document.getElementById("syncTxt");
+  if(live){dot.classList.add("live");txt.textContent="已連線 · 即時同步"}else{dot.classList.remove("live");txt.textContent="離線（僅本機）"}}
+
+function boot(){
+  document.getElementById("meName").textContent=deliverer||"未設定";
+  document.getElementById("setMe").onclick=()=>promptName(false);
+  document.getElementById("logout").onclick=logout;
+  document.getElementById("loginBtn").onclick=tryLogin;
+  document.getElementById("pw").addEventListener("keydown",e=>{if(e.key==="Enter")tryLogin()});
+  document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");view=t.dataset.view;render()});
+  document.querySelectorAll("#typeSeg div").forEach(s=>s.onclick=()=>{document.querySelectorAll("#typeSeg div").forEach(x=>x.classList.remove("on"));s.classList.add("on");typeFilter=s.dataset.t;regionFilter="全部";renderChips();render()});
+  const pt=document.getElementById("pendTog");pt.onclick=()=>{pendOnly=!pendOnly;pt.classList.toggle("on",pendOnly);render()};
+  try{sb=supabase.createClient(SUPA_URL,SUPA_KEY,{realtime:{params:{eventsPerSecond:5}}});
+    initData();
+    sb.channel("pudu-rt").on("postgres_changes",{event:"*",schema:"public",table:"pudu_status"},p=>{if(p.new&&p.new.seq!=null){statusMap[p.new.seq]=p.new;if(role)render()}}).subscribe(st=>{if(st==="SUBSCRIBED")setSync(true)});
+    setInterval(initData,20000);
+  }catch(e){console.error(e);setSync(false)}
+  if(role)enterApp();else showLogin();
+}
+boot();
+</script>
+</body>
+</html>
