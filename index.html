@@ -116,6 +116,8 @@ h1{font-family:"Noto Serif TC",serif;font-weight:900;font-size:27px;margin:2px 0
 .sched{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:12px;color:var(--mute);font-weight:600}
 .dinput{font-family:inherit;font-size:13.5px;padding:6px 9px;border:1.5px solid var(--line);border-radius:9px;color:var(--forest);background:#fff;font-weight:600}
 .dinput:focus{outline:none;border-color:var(--green)}
+.dclear{font-family:inherit;font-size:12px;font-weight:700;color:var(--mute);background:rgba(167,167,162,.14);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+.dclear:active{transform:scale(.96)}
 
 .block{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:14px 0;overflow:hidden}
 .block>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px}
@@ -290,7 +292,7 @@ function rowHtml(r,showRegion){
     <div class="nm">${esc(r.org)}${typeTag(r.type)}${rg}<span class="pf">5箱</span></div>${ev}
     <div class="sub2"><a href="${mapUrl(r.addr)}" target="_blank" rel="noopener">${esc(r.addr)}</a>${phone?" · "+phone:""}${contact}</div>
     ${ddlHtml(r)}${schedBadge(r)}
-    ${dOn?"":`<div class="sched"><span>排定配送日</span><input type="date" class="dinput" data-seq="${r.seq}" value="${(s.scheduled_date&&validDate(s.scheduled_date))?s.scheduled_date:""}"></div>`}
+    ${dOn?"":`<div class="sched"><span>排定配送日</span><input type="date" class="dinput" data-seq="${r.seq}" value="${(s.scheduled_date&&validDate(s.scheduled_date))?s.scheduled_date:""}">${(s.scheduled_date&&validDate(s.scheduled_date))?`<button class="dclear" data-seq="${r.seq}">清除</button>`:""}</div>`}
     <div class="acts">${dChip}${rChip}</div>
     ${meta?`<div class="metaline">${meta}</div>`:""}
   </div>`;
@@ -335,7 +337,9 @@ function renderStats(){const tot=RAW.length,dn=RAW.filter(r=>isD(r.seq)).length,
 function bindRows(){document.querySelectorAll(".chip2[data-act]").forEach(c=>{if(c._b)return;c._b=true;
   c.addEventListener("click",()=>act(parseInt(c.dataset.seq,10),c.dataset.act))});
   document.querySelectorAll("input.dinput").forEach(i=>{if(i._b)return;i._b=true;
-    i.addEventListener("change",()=>setSched(parseInt(i.dataset.seq,10),i.value))})}
+    i.addEventListener("change",()=>setSched(parseInt(i.dataset.seq,10),i.value))});
+  document.querySelectorAll("button.dclear").forEach(b=>{if(b._b)return;b._b=true;
+    b.addEventListener("click",()=>setSched(parseInt(b.dataset.seq,10),""))})}
 
 async function act(seq,kind){
   if(kind==="deliver"&&role!=="deliver"){toast("「送達」請用配送身分(8833)");return}
